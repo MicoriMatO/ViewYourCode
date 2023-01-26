@@ -1,0 +1,9 @@
+﻿<Application x:Class="ViewYourCode.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ViewYourCode"
+             StartupUri="Views/VisualIDEView.xaml">
+    <Application.Resources>
+         
+    </Application.Resources>
+</Application>
