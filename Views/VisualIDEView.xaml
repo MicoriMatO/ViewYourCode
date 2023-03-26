@@ -15,31 +15,59 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+        <Grid Grid.Column="0" 
+              Grid.ColumnSpan="2" 
+              Grid.Row="0" 
+              VerticalAlignment="Top" 
+              HorizontalAlignment="Stretch">
             <Menu x:Name="MenuTolls">
                 <MenuItem Header="File" FontSize="14">
-                    <MenuItem Header="Save" Click="MenuItem_Click"></MenuItem>
+                    <MenuItem Header="Save" 
+                              Click="MenuItem_Click">
+                        
+                    </MenuItem>
                 </MenuItem>
             </Menu>
         </Grid>
-        <Grid Grid.Row="1" Background="DarkGray" Grid.Column="0">
+        <Grid Grid.Row="1" 
+              Background="DarkGray" 
+              Grid.Column="0">
 
-            <ListBox  MouseMove="PreFabs_MouseMove" x:Name="PreFabsList" Background="DarkGray" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" AllowDrop="True">
+            <ListBox x:Name="PreFabsList" 
+                      Background="DarkGray" 
+                      VerticalAlignment="Stretch" 
+                      HorizontalAlignment="Stretch" 
+                      PreviewMouseLeftButtonDown="PreFabsList_Grab"
+                      
+                >
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Label Content="{Binding Path=PreFabsName}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                        <Label Content="{Binding Path=PreFabsName}" 
+                               VerticalAlignment="Stretch" 
+                               HorizontalAlignment="Stretch">
                             <Label.ToolTip>
                                 <Label Content="{Binding Path=CodeDescription}" />
                             </Label.ToolTip>
                         </Label>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
-                <ListBox.Items />
-
             </ListBox>
         </Grid>
-        <Grid Background="DimGray" Grid.Column="1" Grid.Row="1">
-            <ListBox x:Name="EditGrid" MouseMove="PreFabs_MouseMove" Drop="ListBox_Drop" DragEnter="ListBox_DragEnter" Background="DimGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
+        <Grid Background="DimGray" 
+              Grid.Column="1" 
+              Grid.Row="1"
+              >
+            <Canvas x:Name="EditGrid" 
+                    Drop="ListBox_Drop" 
+                    Background="DimGray" 
+                    HorizontalAlignment="Stretch" 
+                    VerticalAlignment="Stretch" 
+                    AllowDrop="True"
+                    >
+                
+            </Canvas>
+            
+            <!--<ListBox x:Name="EditGrid" MouseMove="PreFabs_MouseMove" Drop="ListBox_Drop" DragEnter="ListBox_DragEnter" Background="DimGray" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" AllowDrop="True">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Label Content="{Binding Path=PreFabsName}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
@@ -54,7 +82,7 @@
                         </Style.Triggers>
                     </Style>
                 </ListBox.ItemContainerStyle>
-            </ListBox>
+            </ListBox>-->
 
         </Grid>
         <StackPanel Grid.Column="1"/>

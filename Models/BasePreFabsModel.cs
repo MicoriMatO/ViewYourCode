@@ -12,6 +12,7 @@ namespace ViewYourCode.Models
         public string PreFabsName { get; set; }
         public string CodePreview { get; set; }
         public string CodeDescription { get; set; }
+        public Type SelfType { get; set; }
 
     }
 }

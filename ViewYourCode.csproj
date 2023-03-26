@@ -64,8 +64,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Controllers\FileWriter.cs" />
+    <Compile Include="Controllers\ModelSeparator.cs" />
+    <Compile Include="Envoriment\VisualPrimitivEnvoriment.cs" />
     <Compile Include="Models\BasePreFabsModel.cs" />
     <Compile Include="Models\Prefabs\CycleTest.cs" />
+    <Compile Include="Models\Prefabs\NullUnit.cs" />
     <Compile Include="Models\TestPreFabs\TestUnit.cs" />
     <Compile Include="Views\VisualIDEView.xaml.cs">
       <DependentUpon>VisualIDEView.xaml</DependentUpon>

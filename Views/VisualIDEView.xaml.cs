@@ -26,34 +26,26 @@ namespace ViewYourCode
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<BasePreFabsModel> listEditGrid = new ObservableCollection<BasePreFabsModel>();
-        public ObservableCollection<BasePreFabsModel> listPreFabs = new ObservableCollection<BasePreFabsModel>();
-        private int indexDrag;
-        private int indexDrop;
-        //private int nameIncrimetn = 0;
-        private bool flagFromAddedList;
+        public Envoriment.VisualPrimitivEnvoriment VisualPrimitivEnvoriment;
+        public List<BasePreFabsModel> preFabsList;
+        
         public MainWindow()
         {
+            VisualPrimitivEnvoriment = new Envoriment.VisualPrimitivEnvoriment();
+            preFabsList = new List<BasePreFabsModel>();
+
+
+
+
             InitializeComponent();
 
-            PreFabsInit();
-        }
+            EditGrid.MouseMove += VisualPrimitivEnvoriment.Grid_MouseMove;
+            EditGrid.MouseLeftButtonUp += VisualPrimitivEnvoriment.mouseLeftButtonUp;
 
-        private void PreFabsInit()
-        {
-            
-            
-            listPreFabs.Add(new CycleTest());
-            listPreFabs.Add(new TestUnit());
 
-            PreFabsList.ItemsSource = listPreFabs;
-            EditGrid.ItemsSource = listEditGrid;
+            PreFabsList.ItemsSource = preFabsList;
 
-        }
-
-        private void TestMeta()
-        {
-            BasePreFabsModel basePreFabsModel = new BasePreFabsModel();
+            preFabsList.Add(new TestUnit());
         }
 
         private void ListBox_DragEnter(object sender, DragEventArgs e)
@@ -61,86 +53,31 @@ namespace ViewYourCode
             e.Effects = DragDropEffects.Copy;
         }
 
-        private void PreFabs_MouseMove(object sender, MouseEventArgs e)
-        {
-            
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {   
-                if (((ListBox)sender).Name == "PreFabsList")
-                {
-                    flagFromAddedList = true;  
-                }
-                else
-                {
-                    flagFromAddedList = false; 
-                }
-                try
-                {
-                    indexDrag = ((ListBox)sender).SelectedIndex;
-                    object itemDrags = ((ListBox)sender).Items[((ListBox)sender).SelectedIndex];
-                    DragDrop.DoDragDrop(((ListBox)sender), itemDrags, DragDropEffects.Move);
-                }
-                catch (Exception)
-                {
-                    //MessageBox.Show(er.Message);
-                }
-                
-            }
-        }
-        private void EditList_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                BasePreFabsModel si = listEditGrid[((ListBox)sender).SelectedIndex];
-                
-                DragDrop.DoDragDrop((ListBox)sender, si, DragDropEffects.Move);
-            }
-        }
-
         private void ListBox_Drop(object sender, DragEventArgs e)
         {
-            var temp = new object();
-            
-            if (flagFromAddedList)
-            {
-                temp = listPreFabs[indexDrag];
-            }
-            else
-            {
-                temp = listEditGrid[indexDrag];
-            }
-            
-            indexDrop = ((ListBox)sender).SelectedIndex;
-            var dropItem = e.Data.GetData(temp.GetType());
 
-            if (!flagFromAddedList)
-            {
-                if (indexDrop == indexDrag)
-                {
-                    return;
-                }
 
-                listEditGrid.Remove(listEditGrid[indexDrag]);
-            }                
+            //var temp = e.Data.GetData(DataFormats.FileDrop);//сделать через D&D
+            //string idPrefab = preFabsList[PreFabsList.SelectedIndex].PreFabsId;//КОСТЫЛЁЧЕК
 
-            if (indexDrop == -1)
-            {
-                listEditGrid.Add((BasePreFabsModel)dropItem);
-            }
-            else
-            {
-                listEditGrid.Insert(indexDrop, (BasePreFabsModel)dropItem);  
-            }
-            
-            flagFromAddedList = false;
-
-            EditGrid.ItemsSource = listEditGrid;
+            VisualPrimitivEnvoriment.CreatePuzzl(ref EditGrid, preFabsList[PreFabsList.SelectedIndex]);
         }
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            FileWriter fileWriter = new FileWriter();
-            fileWriter.WriteToSkript(listEditGrid);
+            //FileWriter fileWriter = new FileWriter();
+            //fileWriter.WriteToSkript(EditGrid.Children);
+        }
+
+        private void PreFabsList_Grab(object sender, MouseButtonEventArgs e)
+        {
+            ListBox listBox = (ListBox)sender;
+            int indexSelectItem = listBox.SelectedIndex;
+
+            if (indexSelectItem >= 0)
+            { 
+                DragDrop.DoDragDrop(listBox, (PreFabsList.Items[indexSelectItem] as BasePreFabsModel).PreFabsId, DragDropEffects.Move);
+            }      
         }
     }
 }
