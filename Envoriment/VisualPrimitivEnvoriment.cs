@@ -8,11 +8,12 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.ComponentModel;
-using ViewYourCode.Models;
+using VPMSerialezator.Models;
 using ViewYourCode.Controllers;
-using ViewYourCode.Models.TestPreFabs;
+using VPMSerialezator.Models.TestPreFabs;
 using System.Windows.Media.Imaging;
 using System.Collections.ObjectModel;
+using VPMSerialezator; 
 
 namespace ViewYourCode.Envoriment
 {
@@ -26,33 +27,38 @@ namespace ViewYourCode.Envoriment
         private int idMovementedItem = -1;
         private int idTargetItem = -1;
         private ModelSeparator modelSeparator;
+        
+        private List<BasePreFabsModel> TempModels;
 
 
         public VisualPrimitivEnvoriment()
         {
             modelSeparator = new ModelSeparator();
+
+            TempModels = new List<BasePreFabsModel>();
         }
 
         public void CreatePuzzl(ref Canvas ideGrid, BasePreFabsModel model)// create new puzzle block
         {
             
             var sepModel = modelSeparator.SeparateModels(model);//separator its work 
+            
 
             Grid puzle = new Grid();
 
-            if (sepModel is TestUnit)
+            try
             {
                 puzle = new Grid
-                            {
-                                Name = "puzle_" + model.PreFabsName + ideGrid.Children.Count.ToString(),
-                                MinWidth = 50,
-                                MinHeight = 50,
-                                
-                                Background = new SolidColorBrush(Colors.BlueViolet),
-                                HorizontalAlignment = HorizontalAlignment.Left,
-                                VerticalAlignment = VerticalAlignment.Top,
-                                Margin = new Thickness(px, py, 0, 0)
-                            };
+                {
+                    Name = "puzle_" + model.PreFabsName + ideGrid.Children.Count.ToString(),
+                    MinWidth = 50,
+                    MinHeight = 50,
+
+                    Background = new SolidColorBrush(Colors.BlueViolet),
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Top,
+                    Margin = new Thickness(px, py, 0, 0)
+                };
 
                 puzle.MouseMove += Item_MouseMove;
                 puzle.MouseLeftButtonDown += Item_MouseLeftButtonDown;
@@ -60,17 +66,42 @@ namespace ViewYourCode.Envoriment
 
                 TextBlock textBlock = new TextBlock();
                 textBlock.Text = puzle.Name;
+                sepModel.PreFabsName = puzle.Name;
+
                 puzle.Children.Insert(0, textBlock);
-                
-                puzle.Children.Insert(1, CreatePuzzlePanel(1, puzle, "param1"));//1 e.t.c - other params
-                puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param2"));
 
-                puzle.Children.Insert(3, CreatePuzzlePanel(0, puzle, "next"));//but, last - next(if true atach) // 0 - next, 1 e.t.c - params  
-            } 
+                try
+                {
+                    if (sepModel.param1 != null)
+                        puzle.Children.Insert(1, CreatePuzzlePanel(1, puzle, "param1"));//1 e.t.c - other params
+                    if (sepModel.param2 != null)
+                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param2"));
+                    if (sepModel.param3 != null)
+                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param3"));
+                    if (sepModel.param4 != null)
+                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param4"));
+                    if (sepModel.param5 != null)
+                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param5"));
 
-            
 
-            ideGrid.Children.Insert(ideGrid.Children.Count, puzle);
+
+                }
+                catch (Exception) { }
+                try
+                {
+                    if (sepModel.nextUnit != null)
+                        puzle.Children.Insert(3, CreatePuzzlePanel(0, puzle, "next"));//but, last - next(if true atach) // 0 - next, 1 e.t.c - params
+
+                }
+                catch (Exception) { }
+
+                TempModels.Add(sepModel);
+                ideGrid.Children.Insert(ideGrid.Children.Count, puzle);
+
+                puzle.Resources.Add("model", sepModel);
+            }
+            catch (Exception) { }
+
         }
 
         public Grid CreatePuzzlePanel(int turn, Panel Grid, string name)//create triger atachment zone for puzzl
@@ -90,7 +121,7 @@ namespace ViewYourCode.Envoriment
                 trigger.Margin = new Thickness(0, 32 * Grid.Children.Count, 0, 0);
             }
             else if (turn == 1)
-            {// это надо исправить (Повторение кода)
+            {//TODO: это надо исправить (Повторение кода)
                 trigger.Height = 20;
                 trigger.Width = 20;
                 trigger.Background = new SolidColorBrush(Colors.Green);
@@ -102,7 +133,7 @@ namespace ViewYourCode.Envoriment
             return trigger;
         }
 
-        public void TargetUp_PuzleAtach(object sender)//НАЧАЛО ДИКОЙ ХУЙНИ!!
+        public void TargetUp_PuzleAtach(object sender)//НАЧАЛО ДИКОЙ xX*НИ!!
         {
             Panel parentPanel = ((Panel)sender).Parent as Panel;
 
@@ -119,7 +150,7 @@ namespace ViewYourCode.Envoriment
                     (((Panel)item).Margin.Left + ((Panel)item).ActualWidth) > thisX &&
                     ((Panel)item).Margin.Top < thisY &&
                     (((Panel)item).Margin.Top + ((Panel)item).ActualHeight) > thisY)//проверка есть ли в области блока _ клик
-                {
+                {//первое это поиск в общем колличестве block-ов
                     foreach (var itemChild in ((Panel)item).Children)
                     {
                         if (!(itemChild is Panel))//исключить useless texBoxes
@@ -131,7 +162,7 @@ namespace ViewYourCode.Envoriment
                             (((Panel)itemChild).Margin.Left + ((Panel)itemChild).ActualWidth) > thisX - ((Panel)item).Margin.Left &&
                             ((Panel)itemChild).Margin.Top < thisY - ((Panel)item).Margin.Top &&
                             (((Panel)itemChild).Margin.Top + ((Panel)itemChild).ActualHeight) > thisY - ((Panel)item).Margin.Top)//проверка есть ли в области блока _ клик
-                        {
+                        {//второе поиск уже триггера в этом block
                             idTargetItem = parentPanel.Children.IndexOf((Panel)item);
 
                             Panel child = (Panel)parentPanel.Children[idMovementedItem];
@@ -144,18 +175,26 @@ namespace ViewYourCode.Envoriment
 
                             child.Margin = new Thickness((((Panel)itemChild).Margin.Left + ((Panel)itemChild).ActualWidth), (((Panel)itemChild).Margin.Top + ((Panel)itemChild).ActualHeight), 0, 0);//Fix IT
 
-                            //желательно следующий код вывести в отдельный метод!!!!!!!!! (ref.p ref.c) return;
-                            //дальше ад boxing(а) и unboxing(а) т.е. лютая хрень
 
-                            //добавить поиск по имени параметра и добавление в baseModel
-                            //parent превратить в модель 
-                            //найти параметр по названию затригереного поля
-                            //chidl превратить в модель
-                            //заполнить соответсвующий параметр
-                            //а дальше хз
-                            //мб 
+                            if (((Panel)itemChild).Name == "next")
+                            {
+                                InsertParameterIntoBlock(child, item as Panel, 0);//but, last - next(if true atach) // 0 - next, 1 e.t.c - params  
+                            }
 
-                            ((Panel)item).Children.Add(child);
+                            else if (((Panel)itemChild).Name != "next")
+                            {//накостылить обработку параметров с номерами forEach и тд. воть
+                                for (int i = 1; i < 11; i++)
+                                {
+                                    if (((Panel)itemChild).Name == ("param" + i))
+                                    {
+                                        InsertParameterIntoBlock(child, item as Panel, i);
+                                    }
+                                }
+                            }
+                            
+
+
+                            ((Panel)item).Children.Add(child);//TODO: ставить на место тригера поменяй ЭТО!!мб как нибудь
 
                             return;
                         }
@@ -165,6 +204,40 @@ namespace ViewYourCode.Envoriment
                 }
             }
 
+        }//пока закончилась Даа.а.а.а. вот .. так
+
+        private void InsertParameterIntoBlock(Panel child, Panel parentPanel, int mod)
+        {
+            BasePreFabsModel p = (BasePreFabsModel)parentPanel.FindResource("model");
+            BasePreFabsModel c = (BasePreFabsModel)child.FindResource("model");
+            var tempP = modelSeparator.SeparateModels(p);
+            tempP = p;
+
+            try
+            {
+                if (mod == 0)
+                {
+                    tempP.nextUnit = c;
+                }
+            }
+            catch (Exception) { }
+            try
+            {
+                if (mod == 1)
+                    tempP.param1 = c;
+                if (mod == 2)
+                    tempP.param2 = c;
+                if (mod == 3)
+                    tempP.param3 = c;
+                if (mod == 4)
+                    tempP.param4 = c;
+                if (mod == 5)
+                    tempP.param5 = c;
+
+            }
+            catch (Exception) { }
+  
+            p = tempP;
         }
 
         public void TriggerAtach_MouseUp(object sender, MouseButtonEventArgs e)// atach grabes puzzle to other puzzle
@@ -251,8 +324,6 @@ namespace ViewYourCode.Envoriment
             TargetUp_PuzleAtach(sender);
 
             mouseLeftButtonUp(sender, e);
-
-
         }
         public void mouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {

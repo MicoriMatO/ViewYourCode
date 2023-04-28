@@ -14,10 +14,11 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using ViewYourCode.Models;
-using ViewYourCode.Models.Prefabs;
-using ViewYourCode.Models.TestPreFabs;
+using VPMSerialezator.Models;
+using VPMSerialezator.Models.Prefabs;
+using VPMSerialezator.Models.TestPreFabs;
 using ViewYourCode.Controllers;
+using VPMSerialezator;
 
 namespace ViewYourCode
 {
@@ -28,7 +29,9 @@ namespace ViewYourCode
     {
         public Envoriment.VisualPrimitivEnvoriment VisualPrimitivEnvoriment;
         public List<BasePreFabsModel> preFabsList;
-        
+        public VPMSerialezator.SerializatiorVPM vPM;
+
+
         public MainWindow()
         {
             VisualPrimitivEnvoriment = new Envoriment.VisualPrimitivEnvoriment();
@@ -65,8 +68,23 @@ namespace ViewYourCode
 
         private void MenuItem_Click(object sender, RoutedEventArgs e)
         {
-            //FileWriter fileWriter = new FileWriter();
-            //fileWriter.WriteToSkript(EditGrid.Children);
+            FileWriter fileWriter = new FileWriter();
+            Build_Click(sender, e);
+
+            fileWriter.WriteToSkript(vPM.VPMmodel);
+        }
+        private void Build_Click(object sender, RoutedEventArgs e)
+        {
+            List<BasePreFabsModel> OutList = new List<BasePreFabsModel>();
+            vPM = new VPMSerialezator.SerializatiorVPM();
+
+            foreach (var item in EditGrid.Children)
+            {
+                Panel tempItem = item as Panel;
+
+                OutList.Add(tempItem.Resources["model"] as BasePreFabsModel);
+            }
+            vPM.SerializateIntoVPM(OutList);
         }
 
         private void PreFabsList_Grab(object sender, MouseButtonEventArgs e)

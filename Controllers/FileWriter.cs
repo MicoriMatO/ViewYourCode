@@ -6,25 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Shapes;
-using ViewYourCode.Models;
+using VPMSerialezator.Models;
 using Path = System.IO.Path;
+using VPMSerialezator;
 
 namespace ViewYourCode.Controllers
 {
     public class FileWriter
     {
         //public string path = @" ..\..\Result\build.txt";
-        public string path = @"Result\build.txt";
+        public string path = @"Result\";
 
-        public void WriteToSkript(ObservableCollection<BasePreFabsModel> temp)
+        public void WriteToSkript(VPMmodel vPMmodel)
         {
-            using (StreamWriter streamWriter = new StreamWriter(path, false, System.Text.Encoding.Default))
+            using (StreamWriter streamWriter = new StreamWriter(path + vPMmodel.FileName + vPMmodel.FileType, false, System.Text.Encoding.Default))
             {
-                foreach (var item in temp)
-                {
-                    streamWriter.WriteLine(item.CodePreview);
-                }
-                
+                streamWriter.WriteLine(vPMmodel.OutPutCode);
+ 
             }    
         }
     }
