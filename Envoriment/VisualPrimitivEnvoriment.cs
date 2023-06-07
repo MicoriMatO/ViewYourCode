@@ -41,8 +41,7 @@ namespace ViewYourCode.Envoriment
         public void CreatePuzzl(ref Canvas ideGrid, BasePreFabsModel model)// create new puzzle block
         {
             
-            var sepModel = modelSeparator.SeparateModels(model);//separator its work 
-            
+            var sepModel = modelSeparator.SeparateModels(model);//separator its work
 
             Grid puzle = new Grid();
 
@@ -54,7 +53,7 @@ namespace ViewYourCode.Envoriment
                     MinWidth = 50,
                     MinHeight = 50,
 
-                    Background = new SolidColorBrush(Colors.BlueViolet),
+                    Background = sepModel.Color,
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Top,
                     Margin = new Thickness(px, py, 0, 0)
@@ -72,16 +71,40 @@ namespace ViewYourCode.Envoriment
 
                 try
                 {
+                    if (sepModel.Operation != null)
+                    {
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzleCombobox(0 ,puzle, "operator"));
+                    }
+                }
+                catch (Exception) { }
+                try
+                {
+                    if (sepModel.Logical != null)
+                    {
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzleCombobox(1, puzle, "logical"));
+                    }
+                }
+                catch (Exception) { }
+                try
+                {
+                    if (sepModel.Value != null)
+                    {
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzleInsertValue(puzle, "value"));
+                    }
+                }
+                catch (Exception) { }
+                try
+                {
                     if (sepModel.param1 != null)
-                        puzle.Children.Insert(1, CreatePuzzlePanel(1, puzle, "param1"));//1 e.t.c - other params
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param1"));//1 e.t.c - other params
                     if (sepModel.param2 != null)
-                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param2"));
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param2"));
                     if (sepModel.param3 != null)
-                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param3"));
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param3"));
                     if (sepModel.param4 != null)
-                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param4"));
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param4"));
                     if (sepModel.param5 != null)
-                        puzle.Children.Insert(2, CreatePuzzlePanel(1, puzle, "param5"));
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param5"));
 
 
 
@@ -89,8 +112,16 @@ namespace ViewYourCode.Envoriment
                 catch (Exception) { }
                 try
                 {
+                    if (sepModel.Operation != null)
+                    {
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(2, puzle, "inserted"));
+                    }
+                }
+                catch (Exception) { }
+                try
+                {
                     if (sepModel.nextUnit != null)
-                        puzle.Children.Insert(3, CreatePuzzlePanel(0, puzle, "next"));//but, last - next(if true atach) // 0 - next, 1 e.t.c - params
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(0, puzle, "next"));//but, last - next(if true atach) // 0 - next, 1 e.t.c - params
 
                 }
                 catch (Exception) { }
@@ -102,6 +133,77 @@ namespace ViewYourCode.Envoriment
             }
             catch (Exception) { }
 
+        }
+        public ComboBox CreatePuzleCombobox(int mod, Panel Grid, string name)
+        {
+            ComboBox comboBox = new ComboBox();
+            comboBox.HorizontalAlignment = HorizontalAlignment.Left;
+            comboBox.VerticalAlignment = VerticalAlignment.Top;
+            comboBox.Margin = new Thickness(0, 16 , 0, 0);
+            if (mod == 0)
+            {
+                comboBox.Items.Add(" + ");
+                comboBox.Items.Add(" - ");
+                comboBox.Items.Add(" / ");
+                comboBox.Items.Add(" * ");
+            }
+            if (mod == 1)
+            {
+                comboBox.Items.Add(" or ");
+                comboBox.Items.Add(" is ");
+                comboBox.Items.Add(" not ");
+                comboBox.Items.Add(" and ");
+            }
+
+            comboBox.SelectedIndex = 0;
+
+            comboBox.SelectionChanged += OperatorChanged;
+
+            return comboBox;
+        }
+        public TextBox CreatePuzleInsertValue(Panel Grid, string name)
+        {
+            TextBox textBox = new TextBox();
+            textBox.HorizontalAlignment = HorizontalAlignment.Left;
+            textBox.VerticalAlignment = VerticalAlignment.Top;
+            textBox.Width = 20;
+            textBox.Margin = new Thickness(0, 16, 0, 0);
+
+            textBox.SelectionChanged += ChangeValue;
+
+            return textBox;
+        }
+        public void ChangeValue(object sender, RoutedEventArgs e)
+        {
+            Panel parentPanel = ((TextBox)sender).Parent as Panel;
+
+            BasePreFabsModel p = (BasePreFabsModel)parentPanel.FindResource("model");
+            var tempP = modelSeparator.SeparateModels(p);
+            tempP = p;
+
+            try
+            {
+                tempP.Value = ((TextBox)sender).Text;
+            }
+            catch (Exception) { }
+
+            p = tempP;
+        }
+        public void OperatorChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Panel parentPanel = ((ComboBox)sender).Parent as Panel;
+
+            BasePreFabsModel p = (BasePreFabsModel)parentPanel.FindResource("model");
+            var tempP = modelSeparator.SeparateModels(p);
+            tempP = p;
+
+            try
+            {
+                tempP.Operation = ((ComboBox)sender).SelectedItem;
+            }
+            catch (Exception) { }
+
+            p = tempP;
         }
 
         public Grid CreatePuzzlePanel(int turn, Panel Grid, string name)//create triger atachment zone for puzzl
@@ -125,6 +227,15 @@ namespace ViewYourCode.Envoriment
                 trigger.Height = 20;
                 trigger.Width = 20;
                 trigger.Background = new SolidColorBrush(Colors.Green);
+                trigger.HorizontalAlignment = HorizontalAlignment.Left;
+                trigger.VerticalAlignment = VerticalAlignment.Top;
+                trigger.Margin = new Thickness(30, 30 * Grid.Children.Count, 0, 0);
+            }
+            else if (turn == 2)
+            {//TODO: это надо исправить (Повторение кода)
+                trigger.Height = 20;
+                trigger.Width = 20;
+                trigger.Background = new SolidColorBrush(Colors.Purple);
                 trigger.HorizontalAlignment = HorizontalAlignment.Left;
                 trigger.VerticalAlignment = VerticalAlignment.Top;
                 trigger.Margin = new Thickness(30, 30 * Grid.Children.Count, 0, 0);

@@ -1,0 +1,18 @@
+﻿<Window x:Class="ViewYourCode.Views.SettingForNewProjectView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ViewYourCode.Views"
+        mc:Ignorable="d"
+        Title="SettingForNewProjectView" Height="322" Width="434">
+    <Grid>
+        <Label Content="Name Project" Width="250" Height="25" Margin="10,10" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <TextBox x:Name="TextBox_NameProject" Width="250" Height="25" Margin="10,40" VerticalAlignment="Top" HorizontalAlignment="Left" Background="LightGray"/>
+        <Label Content="Path To Project" Width="250" Height="25" Margin="10,70" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+        <TextBox x:Name="TextBox_PathProject" Width="250" Height="25" Margin="10,100" VerticalAlignment="Top" HorizontalAlignment="Left" Background="LightGray"/>
+        <Button x:Name="Button_OpenFileDialog" Content="▼" Width="25" Height="25" Margin="260,100,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Click="Button_OpenFileDialog_Click"/>
+
+        <Button x:Name="Button_CreateProject" Content="Create" Width="50" Height="25" Margin="10,10" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="Button_CreateProject_Click"/>
+    </Grid>
+</Window>

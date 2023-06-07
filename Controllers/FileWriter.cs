@@ -15,11 +15,11 @@ namespace ViewYourCode.Controllers
     public class FileWriter
     {
         //public string path = @" ..\..\Result\build.txt";
-        public string path = @"Result\";
+        public string Path = @"Result\";
 
-        public void WriteToSkript(VPMmodel vPMmodel)
+        public void WriteToSkript(VPMmodel vPMmodel, string name, string path)
         {
-            using (StreamWriter streamWriter = new StreamWriter(path + vPMmodel.FileName + vPMmodel.FileType, false, System.Text.Encoding.Default))
+            using (StreamWriter streamWriter = new StreamWriter(path + name + vPMmodel.FileType, false, System.Text.Encoding.Default))
             {
                 streamWriter.WriteLine(vPMmodel.OutPutCode);
  

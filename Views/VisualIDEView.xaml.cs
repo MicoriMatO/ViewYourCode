@@ -30,15 +30,19 @@ namespace ViewYourCode
         public Envoriment.VisualPrimitivEnvoriment VisualPrimitivEnvoriment;
         public List<BasePreFabsModel> preFabsList;
         public VPMSerialezator.SerializatiorVPM vPM;
+        public string ProjectName { get; set; }
+        public string ProjectPath { get; set; }
 
 
-        public MainWindow()
+        public MainWindow(string projectName, string projectPath)
         {
+            ProjectName = projectName;
+            ProjectPath = projectPath;
+
+            this.Title = ProjectName;
+
             VisualPrimitivEnvoriment = new Envoriment.VisualPrimitivEnvoriment();
             preFabsList = new List<BasePreFabsModel>();
-
-
-
 
             InitializeComponent();
 
@@ -48,7 +52,13 @@ namespace ViewYourCode
 
             PreFabsList.ItemsSource = preFabsList;
 
-            preFabsList.Add(new TestUnit());
+            //preFabsList.Add(new TestUnit());
+            preFabsList.Add(new NumberUnit());
+            preFabsList.Add(new InputlUnit());
+            preFabsList.Add(new OutUnitlUnit());
+            preFabsList.Add(new MathArifmeticaUnit());
+            preFabsList.Add(new IfLogicalUnit());
+            preFabsList.Add(new WhileCykleUnit()); 
         }
 
         private void ListBox_DragEnter(object sender, DragEventArgs e)
@@ -71,7 +81,7 @@ namespace ViewYourCode
             FileWriter fileWriter = new FileWriter();
             Build_Click(sender, e);
 
-            fileWriter.WriteToSkript(vPM.VPMmodel);
+            fileWriter.WriteToSkript(vPM.VPMmodel, ProjectName, ProjectPath);
         }
         private void Build_Click(object sender, RoutedEventArgs e)
         {
