@@ -54,8 +54,10 @@ namespace ViewYourCode
 
             //preFabsList.Add(new TestUnit());
             preFabsList.Add(new NumberUnit());
+            preFabsList.Add(new StringUnit());
             preFabsList.Add(new InputlUnit());
             preFabsList.Add(new OutUnitlUnit());
+            preFabsList.Add(new Variables());
             preFabsList.Add(new MathArifmeticaUnit());
             preFabsList.Add(new IfLogicalUnit());
             preFabsList.Add(new WhileCykleUnit()); 
@@ -94,7 +96,7 @@ namespace ViewYourCode
 
                 OutList.Add(tempItem.Resources["model"] as BasePreFabsModel);
             }
-            vPM.SerializateIntoVPM(OutList);
+            vPM.SerializationVMP(OutList);
         }
 
         private void PreFabsList_Grab(object sender, MouseButtonEventArgs e)

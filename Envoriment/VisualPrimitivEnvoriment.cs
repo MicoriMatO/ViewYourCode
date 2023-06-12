@@ -96,7 +96,7 @@ namespace ViewYourCode.Envoriment
                 try
                 {
                     if (sepModel.param1 != null)
-                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param1"));//1 e.t.c - other params
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param1"));
                     if (sepModel.param2 != null)
                         puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param2"));
                     if (sepModel.param3 != null)
@@ -105,14 +105,11 @@ namespace ViewYourCode.Envoriment
                         puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param4"));
                     if (sepModel.param5 != null)
                         puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(1, puzle, "param5"));
-
-
-
                 }
                 catch (Exception) { }
                 try
                 {
-                    if (sepModel.Operation != null)
+                    if (sepModel.insertedUnit != null)
                     {
                         puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(2, puzle, "inserted"));
                     }
@@ -121,7 +118,7 @@ namespace ViewYourCode.Envoriment
                 try
                 {
                     if (sepModel.nextUnit != null)
-                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(0, puzle, "next"));//but, last - next(if true atach) // 0 - next, 1 e.t.c - params
+                        puzle.Children.Insert(puzle.Children.Count, CreatePuzzlePanel(0, puzle, "next"));
 
                 }
                 catch (Exception) { }
@@ -210,7 +207,7 @@ namespace ViewYourCode.Envoriment
         {
             Grid trigger = new Grid
             {
-                Name = name//"trigger_" + ideGrid.Children.Count.ToString() + "_" + turn
+                Name = name
             };
 
             if (turn == 0)//next
@@ -244,7 +241,7 @@ namespace ViewYourCode.Envoriment
             return trigger;
         }
 
-        public void TargetUp_PuzleAtach(object sender)//НАЧАЛО ДИКОЙ xX*НИ!!
+        public void TargetUp_PuzleAtach(object sender)
         {
             Panel parentPanel = ((Panel)sender).Parent as Panel;
 
@@ -277,7 +274,7 @@ namespace ViewYourCode.Envoriment
                             idTargetItem = parentPanel.Children.IndexOf((Panel)item);
 
                             Panel child = (Panel)parentPanel.Children[idMovementedItem];
-                            if (item == child)//block self atach
+                            if (item == child)
                             {
                                 continue;
                             }
@@ -289,11 +286,15 @@ namespace ViewYourCode.Envoriment
 
                             if (((Panel)itemChild).Name == "next")
                             {
-                                InsertParameterIntoBlock(child, item as Panel, 0);//but, last - next(if true atach) // 0 - next, 1 e.t.c - params  
+                                InsertParameterIntoBlock(child, item as Panel, 0); 
                             }
-
-                            else if (((Panel)itemChild).Name != "next")
-                            {//накостылить обработку параметров с номерами forEach и тд. воть
+                            if (((Panel)itemChild).Name == "inserted")
+                            {
+                                InsertParameterIntoBlock(child, item as Panel, -1);
+                            }
+                            if (((Panel)itemChild).Name != "next" &&
+                                ((Panel)itemChild).Name != "inserted")
+                            {
                                 for (int i = 1; i < 11; i++)
                                 {
                                     if (((Panel)itemChild).Name == ("param" + i))
@@ -305,7 +306,7 @@ namespace ViewYourCode.Envoriment
                             
 
 
-                            ((Panel)item).Children.Add(child);//TODO: ставить на место тригера поменяй ЭТО!!мб как нибудь
+                            ((Panel)item).Children.Add(child);
 
                             return;
                         }
@@ -315,7 +316,7 @@ namespace ViewYourCode.Envoriment
                 }
             }
 
-        }//пока закончилась Даа.а.а.а. вот .. так
+        }
 
         private void InsertParameterIntoBlock(Panel child, Panel parentPanel, int mod)
         {
@@ -329,6 +330,10 @@ namespace ViewYourCode.Envoriment
                 if (mod == 0)
                 {
                     tempP.nextUnit = c;
+                }
+                if (mod == -1)
+                {
+                    tempP.insertedUnit = c;
                 }
             }
             catch (Exception) { }
